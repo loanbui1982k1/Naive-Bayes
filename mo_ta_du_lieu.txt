@@ -1,0 +1,16 @@
+1. Number of times pregnant (Số lần mang thai)
+2. Plasma glucose concentration a 2 hours in an oral glucose tolerance test 
+( Nồng độ glucose huyết tương sau 2 giờ trong xét nghiệm dung nạp glucose qua đường miệng)
+3. Diastolic blood pressure (mm Hg)
+( Huyết áp tâm trương (mm Hg) )
+4. Triceps skin fold thickness (mm)
+( Độ dày nếp gấp da cơ tam đầu (mm))
+5. 2-Hour serum insulin (mu U/ml)
+( Insulin huyết thanh trong 2 giờ (mu U / ml))
+6. Body mass index (weight in kg/(height in m)^2)
+( Chỉ số khối cơ thể (trọng lượng tính bằng kg / (chiều cao tính bằng m) ^ 2))
+7. Diabetes pedigree function
+( Chức năng phả hệ bệnh tiểu đường)
+8. Age (years)
+( Tuổi (năm))
+9. Class variable (0 or 1)
