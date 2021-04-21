@@ -6,7 +6,7 @@ import sys
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 #from sklearn.cross_validation import train_test_split
-#pip3 install -U scikit-learn scipy matplotlib
+#pip3 install numpy, install pandas, install scikit-learn, install matplotlib
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 # Load data tu CSV file
