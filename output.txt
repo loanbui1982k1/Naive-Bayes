@@ -1,0 +1,6 @@
+Data size 768 
+Training Size=614 
+Test Size=154
+Chuan doan: Khong mac benh
+Accuracy of my implement: 75.32467532467533%
+Accuracy of sklearn: 75.32467532467533%

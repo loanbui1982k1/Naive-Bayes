@@ -2,13 +2,9 @@ import csv
 import random
 import math
 import sys
-#from sklearn.preprocessing import Imputer
-from sklearn import preprocessing
-from sklearn.model_selection import train_test_split
-#from sklearn.cross_validation import train_test_split
-#pip3 install numpy, install pandas, install scikit-learn, install matplotlib
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
+
 # Load data tu CSV file
 def load_data(filename):
     lines = csv.reader(open(filename), delimiter=',')
@@ -38,8 +34,17 @@ def split_data(dataset, splitRatio):
     while len(trainSet) < trainSize:
         index = random.randrange(len(copy))
         trainSet.append(copy.pop(index))
-    
     return [trainSet, copy]
+
+def probLabel(trainSet, classValue):
+    count = 0
+    for x in trainSet:
+        if x[-1] == classValue:
+            count += 1
+    if count > 0:
+        return count / len(trainSet)
+    else:
+        return 1 / (len(trainSet) + 1)            
 
 # tinh toan gia tri trung binh cua moi thuoc tinh
 def mean(numbers):
@@ -81,12 +86,14 @@ def calculate_prob(x, mean, stdev):
 def calculate_class_prob(summaries, inputVector):
     probabilities = {}
     for classValue, classSummaries in summaries.items():
-        probabilities[classValue] = 1
+        probabilities[classValue] = prob_label[classValue]
+        #probabilities[classValue] = 1
         for i in range(len(classSummaries)):
             mean, stdev = classSummaries[i]
             x = inputVector[i]
             probabilities[classValue] *= calculate_prob(x, mean, stdev)
-
+            #probabilities[classValue] += math.log(calculate_prob(x, mean, stdev))
+      
     return probabilities
 
 # Du doan vector thuoc phan lop nao
@@ -97,7 +104,6 @@ def predict(summaries, inputVector):
         if bestLabel is None or probability > bestProb:
             bestProb = probability
             bestLabel = classValue
-
     return bestLabel
 
 # Du doan tap du lieu testing thuoc vao phan lop nao
@@ -115,34 +121,54 @@ def get_accuracy(testSet, predictions):
     for i in range(len(testSet)):
         if testSet[i][-1] == predictions[i]:
             correct += 1
-
     return (correct / float(len(testSet))) * 100.0
 
 def get_data_label(dataset):
     data = []
     label = []
     for x in dataset:
-        data.append(x[:8])
+        data.append(x[:len(x) - 1])
         label.append(x[-1])
 
     return data, label
 
 def main():
     filename = 'tieu_duong.csv'
-    splitRatio = 0.7
+    splitRatio = 0.8
     dataset = load_data(filename= 'tieu_duong.csv')
     trainingSet, testSet = split_data(dataset, splitRatio)
 
-    print('Data size {} \nTraining Size={} \nTest Size={}'.format(len(dataset), len(trainingSet), len(testSet)))
-
+    filein = open('input.txt')
+    testInput = filein.read()
+    inputVector = testInput.split(',')
+    for i in range(len(inputVector)):
+        inputVector[i] = float (inputVector[i])
+    fileout = open('output.txt', 'w')
+    fileout.write('Data size {} \nTraining Size={} \nTest Size={}\n'.format(len(dataset), len(trainingSet), len(testSet)))
+   
+    global prob_label
+    prob_label = {}
+    for i in separate_data(dataset).keys():
+        prob_label[i] = probLabel(trainingSet, i)
+    
+    
     # prepare model
     summaries = summarize_by_class(trainingSet)
     get_data_label(trainingSet)
+    predictInput = predict(summaries, inputVector)
+    print(predictInput)
+    #fileout.write('Chuẩn đoán: {} \n'.format(predictInput))
+    if predictInput == 0:
+        fileout.write('Chuan doan: Khong mac benh\n')
+    else: 
+        fileout.write('Chuan doan: Mac benh\n')
+    print(calculate_class_prob(summaries, inputVector))
 
+    
     # test model
     predictions = get_predictions(summaries, testSet)
     accuracy = get_accuracy(testSet, predictions)
-    print('Accuracy of my implement: {}%'.format(accuracy))
+    fileout.write('Accuracy of my implement: {}%\n'.format(accuracy))
 
     # Compare with sklearn
     dataTrain, labelTrain = get_data_label(trainingSet)
@@ -151,11 +177,11 @@ def main():
     #from sklearn.naive_bayes import GaussianNB
     clf = GaussianNB()
     clf.fit(dataTrain, labelTrain)
-
     score = clf.score(dataTest, labelTest)
 
-    print('Accuracy of sklearn: {}%'.format(score*100))
-
+    fileout.write('Accuracy of sklearn: {}%'.format(score*100))
+    fileout.close()
+    filein.close()
 
 if __name__ == "__main__":
     main()
